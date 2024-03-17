@@ -126,14 +126,49 @@ const GameController = (() => {
         }
     };
 
-    return { startGame, playRound };
+    const getCurrentPlayer = () => {
+        return currentPlayer;
+    }
+
+    return { startGame, playRound, getCurrentPlayer };
 })();
 
 
-GameController.startGame();
-GameController.playRound(0);
-GameController.playRound(7);
-GameController.playRound(1);
-GameController.playRound(4);
-GameController.playRound(2);
-GameController.playRound(3);
+// GameController.startGame();
+// GameController.playRound(0);
+// GameController.playRound(1);
+// GameController.playRound(2);
+// GameController.playRound(3);
+// GameController.playRound(4);
+// GameController.playRound(6);
+// GameController.playRound(7);
+// GameController.playRound(8);
+// GameController.playRound(5);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const boardElement = document.getElementById('game-board');
+    const gameInfo = document.getElementById('game-info');
+
+    //clear previous content
+    boardElement.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+        const square = document.createElement('div');
+        square.classList.add('grid');
+        square.dataset.index = i;
+        square.addEventListener('click', (function (index) {
+            return function () {
+                //get marker before making move
+                const marker = GameController.getCurrentPlayer().getMarker();
+                //check if square is empty before move
+                if (Gameboard.getValueAt(index) === "") {
+                    GameController.playRound(index);
+                    square.textContent = Gameboard.getValueAt(index);
+                    gameInfo.textContent = `${GameController.getCurrentPlayer().getName()}'s turn`;
+                }
+
+            };
+        })(i));
+        boardElement.appendChild(square);
+
+    }
+});
