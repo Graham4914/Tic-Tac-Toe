@@ -28,9 +28,6 @@ const Gameboard = (() => {
             } else if (player === 'O') {
                 cell.classList.add('o-marker');
             }
-
-
-
             return true;
         } else {
             console.log("Invalid move. Try again");
@@ -44,7 +41,7 @@ const Gameboard = (() => {
         // Additional code to reset square classes and content
         const squares = document.querySelectorAll('.grid-square');
         squares.forEach(square => {
-            square.classList.remove('x-marker', 'o-marker'); // Replace with your actual classes
+            square.classList.remove('x-marker', 'o-marker');
             square.textContent = '';
         });
     };
@@ -55,13 +52,6 @@ const Gameboard = (() => {
 })();
 
 
-//test log
-// Gameboard.render();
-// Gameboard.makeMove(0, 'X');
-// Gameboard.makeMove(1, 'O');
-
-
-
 //PLAYER FACTORY
 const Player = (name, marker) => {
     const getName = () => name;
@@ -70,17 +60,6 @@ const Player = (name, marker) => {
     //return object with public props and methods
     return { getName, getMarker };
 };
-
-// //test log
-// const player1 = Player('Alice', 'X');
-// const player2 = Player('Bob', 'O');
-
-// console.log(player1.getName());
-// console.log(player1.getMarker());
-// console.log(player2.getName());
-// console.log(player2.getMarker());
-
-
 
 // This function will toggle the board's interactivity
 const toggleBoardInteractivity = (enable) => {
@@ -94,24 +73,20 @@ const toggleBoardInteractivity = (enable) => {
     });
 };
 
-
 //GAME CONTROLLER 
 const GameController = (() => {
     let player1;
     let player2;
     let currentPlayer; // to be set at game start
 
-
     //funtction to change current player
     const switchPlayer = () => {
-
         currentPlayer = currentPlayer === player1 ? player2 : player1;
         updateStatus(`${currentPlayer.getName()}'s Turn`);
     };
 
     //funtion to start or reset the game
     const startGame = (player1Name, player2Name) => {
-
         player1 = Player(player1Name, 'X');
         player2 = Player(player2Name, 'O');
         currentPlayer = player1;
@@ -122,6 +97,7 @@ const GameController = (() => {
         updateStatus(`${currentPlayer.getName()}'s turn`)
         Gameboard.render();
     };
+
     const newGame = () => {
         // Clear the board and render it again
         Gameboard.reset();
@@ -133,20 +109,14 @@ const GameController = (() => {
 
         // Clear the game info
         updateStatus("");
-
-
         document.getElementById('player1-name').value = '';
         document.getElementById('player2-name').value = '';
         document.getElementById('name-input').classList.remove('hidden');
-
         isGameOver = false;
         updateStatus("Enter names to start a new game.");
-
         Gameboard.reset();
 
     };
-
-
 
     //function to check win
     const checkWin = (marker) => {
@@ -179,7 +149,6 @@ const GameController = (() => {
     let messageHistory = [];
 
     const updateStatus = (message) => {
-
         console.log(`Updating status to: ${message}`);
         const gameInfo = document.getElementById('game-info');
         gameInfo.textContent = message;
@@ -193,7 +162,6 @@ const GameController = (() => {
         Gameboard.render();
     }
 
-
     const endGame = (message) => {
         updateStatus(message);
         isGameOver = true;
@@ -201,7 +169,6 @@ const GameController = (() => {
     };
 
     let isGameOver = false;
-
     const getIsGameOver = () => isGameOver;
 
     //function to play round
@@ -223,18 +190,14 @@ const GameController = (() => {
                 switchPlayer();
                 updateStatus(`It's now ${currentPlayer.getName()}'s turn`);
             }
-
         }
     };
 
     const getCurrentPlayer = () => {
         return currentPlayer;
     }
-
-
     return { startGame, playRound, getCurrentPlayer, updateStatus, endGame, restartGame, getIsGameOver, newGame };
 })();
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -272,12 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 //check if square is empty before move
                 if (Gameboard.getValueAt(index) === "") {
                     if (GameController.playRound(index)) {
-
                     };
                     square.textContent = marker;
-
                 }
-
             };
         })(i));
         boardElement.appendChild(square);
