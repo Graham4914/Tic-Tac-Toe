@@ -41,6 +41,12 @@ const Gameboard = (() => {
     //function to reset the board
     const reset = () => {
         board = ["", "", "", "", "", "", "", "", ""];
+        // Additional code to reset square classes and content
+        const squares = document.querySelectorAll('.grid-square');
+        squares.forEach(square => {
+            square.classList.remove('x-marker', 'o-marker'); // Replace with your actual classes
+            square.textContent = '';
+        });
     };
 
     const getValueAt = (index) => board[index];
@@ -128,20 +134,19 @@ const GameController = (() => {
         // Clear the game info
         updateStatus("");
 
-        document.getElementById('new-game-button').addEventListener('click', function () {
-            // Optionally, clear the previous names
-            document.getElementById('player1-name').value = '';
-            document.getElementById('player2-name').value = '';
-            document.getElementById('name-input').classList.remove('hidden');
 
-            isGameOver = false;
-            updateStatus("Enter names to start a new game.");
+        document.getElementById('player1-name').value = '';
+        document.getElementById('player2-name').value = '';
+        document.getElementById('name-input').classList.remove('hidden');
 
-            Gameboard.reset();
+        isGameOver = false;
+        updateStatus("Enter names to start a new game.");
 
-        });
+        Gameboard.reset();
 
     };
+
+
 
     //function to check win
     const checkWin = (marker) => {
