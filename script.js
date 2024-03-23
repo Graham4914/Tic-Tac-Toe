@@ -7,8 +7,13 @@ const Gameboard = (() => {
         console.log(board[0] + "|" + board[1] + "|" + board[2]);
         console.log("-----");
         console.log(board[3] + "|" + board[4] + "|" + board[5]);
-        console.log("-----")
+        console.log("-----");
         console.log(board[6] + "|" + board[7] + "|" + board[8]);
+
+        const cells = document.querySelectorAll('.grid-square');
+        cells.forEach((cell, index) => {
+            cell.textContent = board[index];
+        });
     };
 
     //function to move
@@ -17,6 +22,15 @@ const Gameboard = (() => {
         if (position >= 0 && position < board.length && board[position] === "") {
             board[position] = player; // player either X or O
             render();    // re-render the gameboard
+            const cell = document.querySelector(`.grid-square[data-index="${position}"]`);
+            if (player === 'X') {
+                cell.classList.add('x-marker');
+            } else if (player === 'O') {
+                cell.classList.add('o-marker');
+            }
+
+
+
             return true;
         } else {
             console.log("Invalid move. Try again");
@@ -60,22 +74,73 @@ const Player = (name, marker) => {
 // console.log(player2.getName());
 // console.log(player2.getMarker());
 
+
+
+// This function will toggle the board's interactivity
+const toggleBoardInteractivity = (enable) => {
+    const squares = document.querySelectorAll('.grid-square');
+    squares.forEach(square => {
+        if (enable) {
+            square.classList.remove('disabled');
+        } else {
+            square.classList.add('disabled');
+        }
+    });
+};
+
+
 //GAME CONTROLLER 
 const GameController = (() => {
-    const player1 = Player('Player 1', 'X');
-    const player2 = Player('Player 2', 'O');
-    let currentPlayer = player1;
+    let player1;
+    let player2;
+    let currentPlayer; // to be set at game start
+
 
     //funtction to change current player
     const switchPlayer = () => {
+
         currentPlayer = currentPlayer === player1 ? player2 : player1;
+        updateStatus(`${currentPlayer.getName()}'s Turn`);
     };
 
     //funtion to start or reset the game
-    const startGame = () => {
-        Gameboard.reset();
-        //set player 1 to start
+    const startGame = (player1Name, player2Name) => {
+
+        player1 = Player(player1Name, 'X');
+        player2 = Player(player2Name, 'O');
         currentPlayer = player1;
+        Gameboard.reset();
+
+        toggleBoardInteractivity(true);
+        document.getElementById('name-input').classList.add('hidden');
+        updateStatus(`${currentPlayer.getName()}'s turn`)
+        Gameboard.render();
+    };
+    const newGame = () => {
+        // Clear the board and render it again
+        Gameboard.reset();
+        Gameboard.render();
+
+        toggleBoardInteractivity(false);
+        // Reset the game over flag
+        isGameOver = false;
+
+        // Clear the game info
+        updateStatus("");
+
+        document.getElementById('new-game-button').addEventListener('click', function () {
+            // Optionally, clear the previous names
+            document.getElementById('player1-name').value = '';
+            document.getElementById('player2-name').value = '';
+            document.getElementById('name-input').classList.remove('hidden');
+
+            isGameOver = false;
+            updateStatus("Enter names to start a new game.");
+
+            Gameboard.reset();
+
+        });
+
     };
 
     //function to check win
@@ -105,22 +170,53 @@ const GameController = (() => {
         //check if all space are filled
         return [...Array(9).keys()].every(index => Gameboard.getValueAt(index) !== "");
     };
+    // funtion to update status message
+    let messageHistory = [];
+
+    const updateStatus = (message) => {
+
+        console.log(`Updating status to: ${message}`);
+        const gameInfo = document.getElementById('game-info');
+        gameInfo.textContent = message;
+    };
+
+    const restartGame = () => {
+        Gameboard.reset();
+        currentPlayer = player1;
+        isGameOver = false;
+        updateStatus(currentPlayer.getName() + "'s turn");
+        Gameboard.render();
+    }
+
+
+    const endGame = (message) => {
+        updateStatus(message);
+        isGameOver = true;
+
+    };
+
+    let isGameOver = false;
+
+    const getIsGameOver = () => isGameOver;
+
     //function to play round
     const playRound = (position) => {
+        if (isGameOver) return;
         if (Gameboard.makeMove(position, currentPlayer.getMarker())) {
-            console.log(`${currentPlayer.getName()} made a move at position ${position}.`);
+            updateStatus(`${currentPlayer.getName()} made a move at position ${position}.`);
+            Gameboard.render();
 
             if (checkWin(currentPlayer.getMarker())) {
-                console.log(`${currentPlayer.getName()} Wins!`);
-                return;
+                endGame(`${currentPlayer.getName()} Wins!`);
+                return true;
             } else if (checkTie()) {
-                console.log("It's a tie!");
+                endGame("It's a tie!");
                 //handle tie
-                return;
+                return true;
             } else {
                 //otherwise switch players
                 switchPlayer();
-                console.log(`It's now ${currentPlayer.getName()}'s turn`);
+                updateStatus(`It's now ${currentPlayer.getName()}'s turn`);
             }
 
         }
@@ -130,22 +226,27 @@ const GameController = (() => {
         return currentPlayer;
     }
 
-    return { startGame, playRound, getCurrentPlayer };
+
+    return { startGame, playRound, getCurrentPlayer, updateStatus, endGame, restartGame, getIsGameOver, newGame };
 })();
 
 
-// GameController.startGame();
-// GameController.playRound(0);
-// GameController.playRound(1);
-// GameController.playRound(2);
-// GameController.playRound(3);
-// GameController.playRound(4);
-// GameController.playRound(6);
-// GameController.playRound(7);
-// GameController.playRound(8);
-// GameController.playRound(5);
 
 document.addEventListener('DOMContentLoaded', () => {
+    const newGameButton = document.getElementById('new-game-button');
+    newGameButton.addEventListener('click', GameController.newGame);
+
+    const startGameButton = document.getElementById('start-game-button');
+    startGameButton.addEventListener('click', function () {
+        const player1Name = document.getElementById('player1-name').value || 'Player 1';
+        const player2Name = document.getElementById('player2-name').value || 'Player 2'
+
+        document.getElementById('name-input');
+        GameController.startGame(player1Name, player2Name);
+    })
+    // ---
+    const restartButton = document.getElementById('restart-button');
+    restartButton.addEventListener('click', GameController.restartGame);
     const boardElement = document.getElementById('game-board');
     const gameInfo = document.getElementById('game-info');
 
@@ -153,17 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
     boardElement.innerHTML = '';
     for (let i = 0; i < 9; i++) {
         const square = document.createElement('div');
-        square.classList.add('grid');
+        square.classList.add('grid-square');
         square.dataset.index = i;
         square.addEventListener('click', (function (index) {
             return function () {
+                //if game is over dont allow moves
+                if (GameController.getIsGameOver()) {
+                    return;
+                }
                 //get marker before making move
                 const marker = GameController.getCurrentPlayer().getMarker();
                 //check if square is empty before move
                 if (Gameboard.getValueAt(index) === "") {
-                    GameController.playRound(index);
-                    square.textContent = Gameboard.getValueAt(index);
-                    gameInfo.textContent = `${GameController.getCurrentPlayer().getName()}'s turn`;
+                    if (GameController.playRound(index)) {
+
+                    };
+                    square.textContent = marker;
+
                 }
 
             };

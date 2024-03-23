@@ -1,7 +1,5 @@
  /* CSS Reset */
-*,
-*::before,
-*::after {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -9,42 +7,103 @@
 
 
 body {
-   
-   
- 
-    margin: 0;
+    background-color: #f5f5f5;
     font-family: Arial, Helvetica, sans-serif;
 }
 .game-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
-    max-width: 300px;
-    margin: 0 auto;
-    
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: #e0e0e0;
+   
 }
 
-.game-info {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-    min-width: 200px;
+.input-wrapper {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+header {
+    margin-top: 3vh;
+}
+
+
+
+#name-input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    max-height: 200px;
+    gap: 5px;
+  
+}
+
+#name-input.hidden {
+    display: none;
+}
+input {
+    font-size: 18px;
+}
+
+button {
+    padding:5px;
+    margin: 5px 0;
+    background-color: #fb8c00;
+    color: white;
+    border: none;
+    font-size: large;
+    border-radius: 5px;
+}
+#game-info {
+    width: 100%; /* Fill the width of its container */
+    margin: 1vh 0;
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center children vertically */
+    align-items: center; /* Center children horizontally */
+    font-size: 20px;
+}
+
+.disabled {
+    pointer-events: none; /* Prevents clicking */
+    opacity: 0.6; /* Optional: lowers the opacity */
+  }
+  
+
 header {
     margin-bottom: 1em;
     justify-content: flex-start;
 }
 
 #game-board {
+    
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 10px;
+    margin: 1vh 0;
 }
 
 .grid {
+   
+    background: lightsalmon;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 2em;
+    border: 1px solid #000;
+    padding: 10px;
+}
+
+
+.grid-square {
     width: 100px;
     height: 100px;
     background: #f0f0f0;
@@ -53,16 +112,20 @@ header {
     align-items: center;
     cursor: pointer;
     font-size: 2em;
-    border: 1px solid #000;
+    border: 1px solid #00796b;
 }
 
-.x-marker {
-    color: red;
-}
-.o-marker {
-    color: blue;
+.grid-square.x-marker {
+    color: green; /* Color for the 'X' marker */
 }
 
+.grid-square.o-marker {
+    color: blue; /* Color for the 'O' marker */
+}
 footer {
-    margin-top: 1em;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap:5px
 }
